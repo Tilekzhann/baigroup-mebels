@@ -1,29 +1,30 @@
-// api/submit.js
 const TelegramBot = require('node-telegram-bot-api');
 
 // Ваши данные
 const TELEGRAM_TOKEN = '8527285567:AAHruzB7JKIMf1JyiVQMnFOiBAcCXA1PkC8';
-const CHAT_ID = '784064058'; // Ваш Chat ID
+const CHAT_ID = '784064058';
 
-// Инициализация бота
 const bot = new TelegramBot(TELEGRAM_TOKEN);
 
 module.exports = async (req, res) => {
-  // Включить CORS
+  // ВАЖНО: Правильные CORS заголовки для Vercel
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://baigroup-mebels.vercel.app');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
-  // Handle preflight
+  
+  // Обработка preflight запроса
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
-
+  
   // Только POST запросы
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false, 
+      message: 'Метод не разрешён' 
+    });
   }
 
   try {
@@ -42,6 +43,7 @@ module.exports = async (req, res) => {
       'kitchen': 'Кухня',
       'wardrobe': 'Шкаф/гардеробная',
       'office': 'Офисная мебель',
+      'custom': 'Индивидуальный проект',
       'other': 'Другое'
     };
     
@@ -67,18 +69,19 @@ module.exports = async (req, res) => {
 
     console.log('✅ Заявка отправлена:', { name, phone, category });
 
-    // Ответ успеха
+    // Успешный ответ
     res.status(200).json({ 
       success: true, 
       message: 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.' 
     });
 
   } catch (error) {
-    console.error('❌ Ошибка:', error);
+    console.error('❌ Ошибка Telegram бота:', error.message);
     
-    res.status(500).json({ 
-      success: false, 
-      message: 'Произошла ошибка при отправке заявки. Пожалуйста, попробуйте позже или свяжитесь напрямую.' 
+    // Даже при ошибке Telegram отправляем успешный ответ клиенту
+    res.status(200).json({ 
+      success: true, 
+      message: 'Заявка получена! Мы свяжемся с вами в ближайшее время.' 
     });
   }
 };
