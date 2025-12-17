@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 // Ваши данные
 const TELEGRAM_TOKEN = '8527285567:AAHruzB7JKIMf1JyiVQMnFOiBAcCXA1PkC8';
-const CHAT_ID = '784064058';
+const CHAT_ID = '524907135';
 
 const bot = new TelegramBot(TELEGRAM_TOKEN);
 
