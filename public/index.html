@@ -1345,14 +1345,22 @@ async function sendToTelegram(data) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(data)
     });
     
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     return await response.json();
   } catch (error) {
     console.error('Ошибка отправки:', error);
-    return { success: false, message: 'Ошибка соединения' };
+    return { 
+      success: false, 
+      message: 'Ошибка соединения с сервером' 
+    };
   }
 }
 
